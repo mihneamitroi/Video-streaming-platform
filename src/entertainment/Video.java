@@ -9,6 +9,7 @@ public class Video {
     private ArrayList<String> genres;
     private int favouriteCnt = 0;
     private int viewCnt = 0;
+    private double rating = 0;
 
     public Video(final String title, final int year,
                  final ArrayList<String> cast, final ArrayList<String> genres) {
@@ -43,6 +44,10 @@ public class Video {
     }
 
     public double getRating() {
-        return 0;
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

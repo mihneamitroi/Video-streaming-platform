@@ -1,22 +1,31 @@
 package main;
 
+import action.Command;
+import action.Query;
+import action.Recommendation;
+import actor.Actor;
 import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
-import fileio.Input;
-import fileio.InputLoader;
-import fileio.Writer;
+import entertainment.Video;
+import fileio.*;
+import org.json.JSONObject;
 import org.json.simple.JSONArray;
+import user.User;
+import entertainment.Movie;
+import entertainment.Serial;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
- * The entry point to this homework. It runs the checker that tests your implentation.
+ * The entry point to this homework. It runs the checker that tests your implementation.
  */
 public final class Main {
     /**
@@ -71,6 +80,53 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
+        Command command = new Command();
+        Query query = new Query();
+        Recommendation recommendation = new Recommendation();
+        ArrayList<Video> videos = new ArrayList<>();
+
+        ArrayList<Movie> movies = new ArrayList<>();
+        for (MovieInputData currMovie : input.getMovies()) {
+            Movie movie = new Movie(currMovie);
+            movies.add(movie);
+            videos.add(movie);
+        }
+
+        ArrayList<Serial> serials = new ArrayList<>();
+        for (SerialInputData currSerial : input.getSerials()) {
+            Serial serial = new Serial(currSerial);
+            serials.add(serial);
+            videos.add(serial);
+        }
+
+        ArrayList<Actor> actors = new ArrayList<>();
+        for (ActorInputData currActor : input.getActors()) {
+            Actor actor = new Actor(currActor);
+            actors.add(actor);
+        }
+
+        ArrayList<User> users = new ArrayList<>();
+        for (UserInputData currUser : input.getUsers()) {
+            User user = new User(currUser);
+            users.add(user);
+        }
+
+        List<ActionInputData> actions = input.getCommands();
+        for (ActionInputData action : actions) {
+            String result;
+            if (action.getActionType().equals("command")) {
+                result = command.findType(action, users, videos, movies, serials);
+            } else if (action.getActionType().equals("query")) {
+                result = query.findObjectType(action, users, videos, actors);
+            } else {
+                result = recommendation.findType(action, users, videos);
+            }
+            JSONObject object = new JSONObject();
+            object.put("id", action.getActionId());
+            object.put("message", result);
+
+            arrayResult.add(object);
+        }
 
         fileWriter.closeJSON(arrayResult);
     }
