@@ -3,37 +3,32 @@ package action;
 import entertainment.Video;
 import fileio.ActionInputData;
 import user.User;
-import entertainment.Movie;
-import entertainment.Serial;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class Command {
-    public String findType(final ActionInputData action, final ArrayList<User> users,
-                           final ArrayList<Video> videos, final ArrayList<Movie> movies,
-                           final ArrayList<Serial> serials) {
-        String result = null;
+    public String findType(final ActionInputData action, ArrayList<User> users,
+                           ArrayList<Video> videos) {
+        String result = "";
         int output;
-        String username = action.getUsername();
-        String title = action.getTitle();
         switch (action.getType()) {
             case "favorite" -> {
                 for (User user : users) {
-                    if (user.getUsername().equals(username)) {
-                        output = user.addFavorite(title);
+                    if (user.getUsername().equals(action.getUsername())) {
+                        output = user.addFavorite(action.getTitle());
                         if (output == 2) {
-                           result = "success -> " + title + " was added as favourite";
+                           result = "success -> " + action.getTitle() + " was added as favourite";
                            for (Video video : videos) {
-                               if (video.getTitle().equals(title)) {
+                               if (video.getTitle().equals(action.getTitle())) {
                                    video.addFavorite();
                                    break;
                                }
                            }
                         } else if (output == 1) {
-                            result = "error -> " + title + " is not seen";
+                            result = "error -> " + action.getTitle() + " is not seen";
                         } else {
-                            result = "error -> " + title + " is already in favourite list";
+                            result = "error -> " + action.getTitle() + " is already in favourite list";
                         }
                     }
                 }
@@ -41,14 +36,14 @@ public class Command {
             }
             case "view" -> {
                 for (User user : users) {
-                    if (user.getUsername().equals(username)) {
-                        user.addView(title);
-                        int views = user.getHistory().get(title);
-                        result =  "success -> " + title + " was viewed with total views of " + views;
+                    if (user.getUsername().equals(action.getUsername())) {
+                        user.addView(action.getTitle());
+                        int views = user.getHistory().get(action.getTitle());
+                        result =  "success -> " + action.getTitle() + " was viewed with total views of " + views;
                     }
                 }
                 for (Video video : videos) {
-                    if (video.getTitle().equals(title)) {
+                    if (video.getTitle().equals(action.getTitle())) {
                         video.addView();
                         break;
                     }
@@ -56,33 +51,22 @@ public class Command {
                 return result;
             }
             case "rating" -> {
-                double grade = action.getGrade();
-                int season = action.getSeasonNumber();
                 for (User user : users) {
-                    if (user.getUsername().equals(username)) {
-                        output = user.addRating(title, season, grade);
+                    if (user.getUsername().equals(action.getUsername())) {
+                        output = user.addRating(action.getTitle(), action.getSeasonNumber(), action.getGrade());
                         if (output == 2) {
-                            result = "error -> " + title + " is not seen";
+                            result = "error -> " + action.getTitle() + " is not seen";
                         } else if (output == 1) {
-                            result = "success -> " + title + " was rated with "
-                                    + String.format(Locale.US, "%.1f", grade) + " by " + username;
-                            if (season == 0) {
-                                for (Movie movie : movies) {
-                                    if (movie.getTitle().equals(title)) {
-                                        movie.addRating(grade);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                for (Serial serial : serials) {
-                                    if (serial.getTitle().equals(title)) {
-                                        serial.addRating(grade, action.getSeasonNumber());
-                                        break;
-                                    }
+                            result = "success -> " + action.getTitle() + " was rated with "
+                                    + String.format(Locale.US, "%.1f", action.getGrade()) + " by " + action.getUsername();
+                            for (Video video : videos) {
+                                if (video.getTitle().equals(action.getTitle())) {
+                                    video.addRating(action.getGrade(), action.getSeasonNumber());
+                                    break;
                                 }
                             }
                         } else {
-                            result = "error -> " + title + " has been already rated";
+                            result = "error -> " + action.getTitle() + " has been already rated";
                         }
                         break;
                     }
@@ -90,6 +74,6 @@ public class Command {
                 return result;
             }
         }
-        return "";
+        return result;
     }
 }

@@ -11,8 +11,6 @@ public class Actor {
     private String careerDescription;
     private ArrayList<String> filmography;
     private Map<ActorsAwards, Integer> awards;
-    private double rating;
-    private int ratingCnt = 0;
 
     public Actor(final String name, final String careerDescription,
                           final ArrayList<String> filmography,
@@ -59,21 +57,29 @@ public class Actor {
     }
 
     public double calculateRating(ArrayList<Video> videos) {
-        for (String title : filmography) {
+        double rating = 0, ratingCnt = 0;
+        for (String title : this.filmography) {
             for (Video video : videos) {
                 if (video.getTitle().equals(title)) {
-                    if (this.rating == 0) {
-                        this.rating = video.getRating();
-                        this.ratingCnt++;
-                    } else {
-                        this.rating = this.rating * (double) ratingCnt;
-                        this.rating = this.rating + video.getRating();
-                        this.ratingCnt++;
-                        this.rating = this.rating / (double) ratingCnt;
+                    if (video.getRating() != 0) {
+                        if (rating == 0) {
+                            rating = video.getRating();
+                            ratingCnt++;
+                        } else {
+                            rating = rating * ratingCnt;
+                            rating = rating + video.getRating();
+                            ratingCnt++;
+                            rating = rating / ratingCnt;
+                        }
                     }
                 }
             }
         }
-        return this.rating;
+        return rating;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

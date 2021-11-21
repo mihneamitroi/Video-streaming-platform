@@ -85,17 +85,13 @@ public final class Main {
         Recommendation recommendation = new Recommendation();
         ArrayList<Video> videos = new ArrayList<>();
 
-        ArrayList<Movie> movies = new ArrayList<>();
         for (MovieInputData currMovie : input.getMovies()) {
             Movie movie = new Movie(currMovie);
-            movies.add(movie);
             videos.add(movie);
         }
 
-        ArrayList<Serial> serials = new ArrayList<>();
         for (SerialInputData currSerial : input.getSerials()) {
             Serial serial = new Serial(currSerial);
-            serials.add(serial);
             videos.add(serial);
         }
 
@@ -115,7 +111,7 @@ public final class Main {
         for (ActionInputData action : actions) {
             String result;
             if (action.getActionType().equals("command")) {
-                result = command.findType(action, users, videos, movies, serials);
+                result = command.findType(action, users, videos);
             } else if (action.getActionType().equals("query")) {
                 result = query.findObjectType(action, users, videos, actors);
             } else {

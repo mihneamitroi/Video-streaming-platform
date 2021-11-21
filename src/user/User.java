@@ -12,7 +12,6 @@ public class User {
     private final Map<String, Integer> history;
     private final ArrayList<String> favoriteMovies;
     private final Map<String, Double> rating = new HashMap<>();
-    private int ratingCnt;
 
     public User(final String username, final String subscriptionType,
                          final Map<String, Integer> history,
@@ -21,7 +20,6 @@ public class User {
         this.subscriptionType = subscriptionType;
         this.history = history;
         this.favoriteMovies = favoriteMovies;
-        this.ratingCnt = 0;
     }
 
     public User(final UserInputData user) {
@@ -29,7 +27,6 @@ public class User {
         this.subscriptionType = user.getSubscriptionType();
         this.history = user.getHistory();
         this.favoriteMovies = user.getFavoriteMovies();
-        this.ratingCnt = 0;
     }
 
     public String getUsername() {
@@ -76,5 +73,14 @@ public class User {
             return 1;
         }
         return 2;
+    }
+
+    public int numberRating() {
+        return this.rating.size();
+    }
+
+    @Override
+    public String toString() {
+        return this.username;
     }
 }
