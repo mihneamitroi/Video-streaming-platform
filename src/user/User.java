@@ -1,5 +1,6 @@
 package user;
 
+import entertainment.Video;
 import fileio.UserInputData;
 
 import java.util.ArrayList;
@@ -22,11 +23,25 @@ public class User {
         this.favoriteMovies = favoriteMovies;
     }
 
-    public User(final UserInputData user) {
+    public User(final UserInputData user, final ArrayList<Video> videos) {
         this.username = user.getUsername();
         this.subscriptionType = user.getSubscriptionType();
         this.history = user.getHistory();
         this.favoriteMovies = user.getFavoriteMovies();
+        for (String movie : favoriteMovies) {
+            for (Video video : videos) {
+                if (video.getTitle().equals(movie)) {
+                    video.addFavorite();
+                }
+            }
+        }
+        for (Map.Entry<String, Integer> entry : this.history.entrySet()) {
+            for (Video video : videos) {
+                if (video.getTitle().equals(entry.getKey())) {
+                    video.setViewCnt(entry.getValue());
+                }
+            }
+        }
     }
 
     public String getUsername() {

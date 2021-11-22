@@ -4,31 +4,38 @@ import fileio.MovieInputData;
 
 import java.util.ArrayList;
 
-public class Movie  extends Video {
-    private int duration;
+public class Movie extends Video {
     private ArrayList<Double> ratings = new ArrayList<>();
 
-    public Movie(final String title, final ArrayList<String> cast,
-                          final ArrayList<String> genres, final int year,
-                          final int duration) {
-        super(title, year, cast, genres);
-        this.duration = duration;
+    public Movie(Movie movie) {
+        super(movie.getTitle(), movie.getYear(), movie.getCast(), movie.getGenres(), movie.getDuration());
+        this.ratings = movie.getRatings();
     }
 
-    public Movie(final MovieInputData movie) {
-        super(movie.getTitle(), movie.getYear(), movie.getCast(), movie.getGenres());
-        this.duration = movie.getDuration();
+    public Movie(MovieInputData movie) {
+        super(movie.getTitle(), movie.getYear(), movie.getCast(), movie.getGenres(), movie.getDuration());
     }
 
     public int getDuration() {
-        return duration;
+        return super.getDuration();
     }
 
-    public void addRating(double rating) {
+    @Override
+    public void addRating(double rating, int seasonNumber) {
         this.ratings.add(rating);
         double sum = 0;
-        for (Double curRating : ratings)
+        for (Double curRating : this.ratings) {
             sum += curRating;
-        super.setRating(sum / (double) ratings.size());
+        }
+        super.setRating(sum / (double) this.ratings.size());
+    }
+
+    public ArrayList<Double> getRatings() {
+        return ratings;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

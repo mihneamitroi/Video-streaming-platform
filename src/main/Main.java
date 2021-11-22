@@ -103,7 +103,7 @@ public final class Main {
 
         ArrayList<User> users = new ArrayList<>();
         for (UserInputData currUser : input.getUsers()) {
-            User user = new User(currUser);
+            User user = new User(currUser, videos);
             users.add(user);
         }
 

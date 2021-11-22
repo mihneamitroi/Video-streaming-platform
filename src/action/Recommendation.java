@@ -92,12 +92,9 @@ public class Recommendation {
                                     return 1;
                                 return 0;
                             });
-                            while(true) {
-                                for (Video video : videos) {
-                                    if (!user.getHistory().containsKey(video.getTitle()))
-                                        return "PopularRecommendation result: " + video.getTitle();
-                                }
-                                break;
+                            for (Video video : videos) {
+                                if (!user.getHistory().containsKey(video.getTitle()))
+                                    return "PopularRecommendation result: " + video.getTitle();
                             }
                         }
                         return "PopularRecommendation cannot be applied!";
@@ -123,7 +120,7 @@ public class Recommendation {
                 return "FavoriteRecommendation cannot be applied!";
             case "search":
                 ArrayList<Video> search = new ArrayList<>();
-                for (User user : users)
+                for (User user : users) {
                     if (user.getUsername().equals(action.getUsername())) {
                         if (user.getSubscriptionType().equals("PREMIUM")) {
                             for (Video video : videos) {
@@ -143,8 +140,8 @@ public class Recommendation {
                                 return "SearchRecommendation cannot be applied!";
                             return "SearchRecommendation result: " + search;
                         }
-                        return "SearchRecommendation cannot be applied!";
                     }
+                }
                 return "SearchRecommendation cannot be applied!";
         }
         return "";

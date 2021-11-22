@@ -37,7 +37,7 @@ public class Actor {
     }
 
     public ArrayList<String> getFilmography() {
-        return filmography;
+        return this.filmography;
     }
 
     public void setFilmography(final ArrayList<String> filmography) {
@@ -45,11 +45,11 @@ public class Actor {
     }
 
     public Map<ActorsAwards, Integer> getAwards() {
-        return awards;
+        return this.awards;
     }
 
     public String getCareerDescription() {
-        return careerDescription;
+        return this.careerDescription;
     }
 
     public void setCareerDescription(final String careerDescription) {
@@ -61,20 +61,15 @@ public class Actor {
         for (String title : this.filmography) {
             for (Video video : videos) {
                 if (video.getTitle().equals(title)) {
-                    if (video.getRating() != 0) {
-                        if (rating == 0) {
-                            rating = video.getRating();
-                            ratingCnt++;
-                        } else {
-                            rating = rating * ratingCnt;
-                            rating = rating + video.getRating();
-                            ratingCnt++;
-                            rating = rating / ratingCnt;
-                        }
+                    if (video.getRating() != 0 && video.getRating() != -1) {
+                        rating += video.getRating();
+                        ratingCnt++;
                     }
                 }
             }
         }
+        if (rating != 0)
+            rating = rating / (double) ratingCnt;
         return rating;
     }
 

@@ -2,21 +2,24 @@ package entertainment;
 
 import java.util.ArrayList;
 
-public class Video {
-    private String title;
-    private int year;
-    private ArrayList<String> cast;
-    private ArrayList<String> genres;
+abstract public class Video {
+    private final String title;
+    private final int year;
+    private final ArrayList<String> cast;
+    private final ArrayList<String> genres;
     private int favouriteCnt = 0;
     private int viewCnt = 0;
+    private int duration;
     private double rating = 0;
 
     public Video(final String title, final int year,
-                 final ArrayList<String> cast, final ArrayList<String> genres) {
+                 final ArrayList<String> cast, final ArrayList<String> genres,
+                 final int duration) {
         this.title = title;
         this.year = year;
         this.cast = cast;
         this.genres = genres;
+        this.duration = duration;
     }
 
     public final String getTitle() {
@@ -39,15 +42,42 @@ public class Video {
         this.favouriteCnt++;
     }
 
+    public int getFavouriteCnt() {
+        return this.favouriteCnt;
+    }
+
+    public int getViewCnt() {
+        return this.viewCnt;
+    }
+
     public void addView() {
         this.viewCnt++;
     }
 
+    public void setViewCnt(int viewCnt) {
+        this.viewCnt = viewCnt;
+    }
+
+    public void addRating(double rating, int seasonNumber) {}
+
     public double getRating() {
-        return rating;
+        return this.rating;
     }
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public int getDuration() {
+        return this.duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    @Override
+    public String toString() {
+        return this.title;
     }
 }
