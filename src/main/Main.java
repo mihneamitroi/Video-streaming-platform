@@ -8,7 +8,14 @@ import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
 import entertainment.Video;
-import fileio.*;
+import fileio.ActionInputData;
+import fileio.ActorInputData;
+import fileio.Input;
+import fileio.InputLoader;
+import fileio.MovieInputData;
+import fileio.SerialInputData;
+import fileio.UserInputData;
+import fileio.Writer;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
 import user.User;
@@ -83,8 +90,8 @@ public final class Main {
         Command command = new Command();
         Query query = new Query();
         Recommendation recommendation = new Recommendation();
-        ArrayList<Video> videos = new ArrayList<>();
 
+        ArrayList<Video> videos = new ArrayList<>();
         for (MovieInputData currMovie : input.getMovies()) {
             Movie movie = new Movie(currMovie);
             videos.add(movie);
@@ -120,10 +127,8 @@ public final class Main {
             JSONObject object = new JSONObject();
             object.put("id", action.getActionId());
             object.put("message", result);
-
             arrayResult.add(object);
         }
-
         fileWriter.closeJSON(arrayResult);
     }
 }

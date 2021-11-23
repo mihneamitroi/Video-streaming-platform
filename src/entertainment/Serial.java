@@ -8,38 +8,36 @@ public class Serial extends Video {
     private final int numberOfSeasons;
     private final ArrayList<Season> seasons;
 
-    public Serial(Serial serial) {
-        super(serial.getTitle(), serial.getYear(), serial.getCast(), serial.getGenres(), 0);
-        int x = 0;
-        for (Season season : serial.getSeasons()) {
-            x =+ season.getDuration();
-        }
-        this.setDuration(x);
-        this.numberOfSeasons = serial.getNumberSeason();
-        this.seasons = serial.getSeasons();
-    }
-
     public Serial(final SerialInputData serial) {
         super(serial.getTitle(), serial.getYear(), serial.getCast(), serial.getGenres(), 0);
         int x = 0;
         for (Season season : serial.getSeasons()) {
-            x =+ season.getDuration();
+            x += season.getDuration();
         }
         this.setDuration(x);
         this.numberOfSeasons = serial.getNumberSeason();
         this.seasons = serial.getSeasons();
     }
 
+    /**
+     *
+     */
     public int getNumberSeason() {
-        return numberOfSeasons;
+        return this.numberOfSeasons;
     }
 
+    /**
+     *
+     */
     public ArrayList<Season> getSeasons() {
-        return seasons;
+        return this.seasons;
     }
 
+    /**
+     *
+     */
     @Override
-    public void addRating(double rating, int seasonNumber) {
+    public void addRating(final double rating, final int seasonNumber) {
         this.seasons.get(seasonNumber - 1).getRatings().add(rating);
         double serialRating = 0;
         for (Season season : this.seasons) {
@@ -55,6 +53,9 @@ public class Serial extends Video {
         super.setRating(serialRating / this.seasons.size());
     }
 
+    /**
+     *
+     */
     @Override
     public String toString() {
         return super.toString();

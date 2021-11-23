@@ -5,8 +5,13 @@ import fileio.ActionInputData;
 import user.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Recommendation {
+    /**
+     *
+     */
     public String findType(final ActionInputData action, final ArrayList<User> users,
                          final ArrayList<Video> videos) {
         ArrayList<String> genres = new ArrayList<>();
@@ -31,119 +36,123 @@ public class Recommendation {
         genres.add("Western");
         genres.add("Tv Movie");
 
+        User user = null;
+        boolean ok = false;
+        for (User curUser : users) {
+            if (curUser.getUsername().equals(action.getUsername())) {
+                user = curUser;
+                ok = true;
+            }
+        }
+        if (!ok) {
+            return "";
+        }
         switch (action.getType()) {
-            case "standard":
-                for (User user : users) {
-                    if (user.getUsername().equals(action.getUsername())) {
-                        for (Video video : videos) {
-                            if (!user.getHistory().containsKey(video.getTitle())) {
-                                return "StandardRecommendation result: " + video.getTitle();
-                            }
-                        }
+            case "standard" -> {
+                for (Video video : videos) {
+                    if (!user.getHistory().containsKey(video.getTitle())
+                            && video.getViewCnt() != 0) {
+                        return "StandardRecommendation result: " + video.getTitle();
                     }
                 }
                 return "StandardRecommendation cannot be applied!";
-            case "best_unseen":
-                ArrayList<Video> best_unseen = new ArrayList<>();
-                for (User user : users)
-                    if (user.getUsername().equals(action.getUsername())) {
+            }
+            case "best_unseen" -> {
+                ArrayList<Video> bestUnseen = new ArrayList<>();
+                for (Video video : videos) {
+                    if (!user.getHistory().containsKey(video.getTitle())) {
+                        bestUnseen.add(video);
+                    }
+                }
+                bestUnseen.sort((video1, video2) -> (int) (video2.getRating()
+                        - video1.getRating()));
+                if (bestUnseen.size() == 0) {
+                    return "BestRatedUnseenRecommendation cannot be applied!";
+                }
+                return "BestRatedUnseenRecommendation result: " + bestUnseen.get(0).getTitle();
+            }
+            case "popular" -> {
+                ArrayList<Video> popular = new ArrayList<>();
+                Map<String, Integer> genreMap = new HashMap<>();
+                if (user.getSubscriptionType().equals("PREMIUM")) {
+                    for (String genre : genres) {
+                        genreMap.put(genre, 0);
+                    }
+                    for (Map.Entry<String, Integer> entry: genreMap.entrySet()) {
                         for (Video video : videos) {
-                            if (!user.getHistory().containsKey(video.getTitle())) {
-                                best_unseen.add(video);
+                            for (String videoGenre : video.getGenres()) {
+                                if (videoGenre.equals(entry.getKey())) {
+                                    genreMap.put(entry.getKey(), entry.getValue()
+                                            + video.getViewCnt());
+                                }
                             }
                         }
-                        best_unseen.sort((video1, video2) -> {
-                            if (video1.getRating() < video2.getRating())
+                    }
+                    ArrayList<Map.Entry<String, Integer>> genreList
+                            = new ArrayList<>(genreMap.entrySet());
+                    genreList.sort((genre1, genre2) -> genre2.getValue() - genre1.getValue());
+                    for (Map.Entry<String, Integer> popularGenre : genreList) {
+                        for (Video video : videos) {
+                            if (video.getGenres().contains(popularGenre.getKey())) {
+                                popular.add(video);
+                            }
+                        }
+                        popular.sort((video1, video2) -> {
+                            if (video1.getViewCnt() < video2.getViewCnt()) {
                                 return 1;
+                            }
                             return 0;
                         });
-                        if (best_unseen.size() == 0)
-                            return "BestRatedUnseenRecommendation cannot be applied!";
-                        return "BestRatedUnseenRecommendation result: " + best_unseen.get(0).getTitle();
-                    }
-            case "popular":
-                ArrayList<Video> popular = new ArrayList<>();
-                for (User user : users)
-                    if (user.getUsername().equals(action.getUsername())) {
-                        if (user.getSubscriptionType().equals("PREMIUM")) {
-                            int maxViews = 0;
-                            String maxViewsGenre = null;
-                            for (String genre : genres) {
-                                int views = 0;
-                                for (Video video : videos) {
-                                    for (String videoGenre : video.getGenres()) {
-                                        if (videoGenre.equals(genre))
-                                            views += video.getViewCnt();
-                                    }
-                                    if (views > maxViews) {
-                                        maxViews = views;
-                                        maxViewsGenre = genre;
-                                    }
-                                }
+                        for (Video video : popular) {
+                            if (!user.getHistory().containsKey(video.getTitle())) {
+                                return "PopularRecommendation result: " + video.getTitle();
                             }
-                            for (Video video : videos) {
-                                for (String genre : video.getGenres()) {
-                                    if (genre.equals(maxViewsGenre))
-                                        popular.add(video);
-                                }
-                            }
-                            popular.sort((video1, video2) -> {
-                                if (video1.getViewCnt() < video2.getViewCnt())
-                                    return 1;
-                                return 0;
-                            });
-                            for (Video video : videos) {
-                                if (!user.getHistory().containsKey(video.getTitle()))
-                                    return "PopularRecommendation result: " + video.getTitle();
-                            }
-                        }
-                        return "PopularRecommendation cannot be applied!";
-                    }
-                return "PopularRecommendation cannot be applied!";
-            case "favorite":
-                ArrayList<Video> favorite = new ArrayList<>(videos);
-                for (User user : users)
-                    if (user.getUsername().equals(action.getUsername())) {
-                        if (user.getSubscriptionType().equals("PREMIUM")) {
-                            favorite.sort((video1, video2) -> {
-                                if (video1.getFavouriteCnt() < video2.getFavouriteCnt())
-                                    return 1;
-                                return 0;
-                            });
-                            for (Video video : favorite) {
-                                if (!user.getHistory().containsKey(video.getTitle()))
-                                    return "FavoriteRecommendation result: " + video.getTitle();
-                            }
-                        }
-                        return "FavoriteRecommendation cannot be applied!";
-                    }
-                return "FavoriteRecommendation cannot be applied!";
-            case "search":
-                ArrayList<Video> search = new ArrayList<>();
-                for (User user : users) {
-                    if (user.getUsername().equals(action.getUsername())) {
-                        if (user.getSubscriptionType().equals("PREMIUM")) {
-                            for (Video video : videos) {
-                                for (String videoGenre : video.getGenres()) {
-                                    if (videoGenre.equals(action.getGenre()))
-                                        search.add(video);
-                                }
-                            }
-                            search.sort((video1, video2) -> {
-                                if (video1.getRating() == video2.getRating()) {
-                                    return video1.getTitle().compareTo(video2.getTitle());
-                                } else {
-                                    return Double.compare(video1.getRating(), video2.getRating());
-                                }
-                            });
-                            if (search.size() == 0)
-                                return "SearchRecommendation cannot be applied!";
-                            return "SearchRecommendation result: " + search;
                         }
                     }
                 }
+                return "PopularRecommendation cannot be applied!";
+            }
+            case "favorite" -> {
+                ArrayList<Video> favorite = new ArrayList<>(videos);
+                favorite.removeIf(video -> video.getFavouriteCnt() == 0);
+                if (user.getSubscriptionType().equals("PREMIUM")) {
+                    favorite.sort((video1, video2) -> {
+                        return video2.getFavouriteCnt() - video1.getFavouriteCnt();
+                    });
+                    for (Video video : favorite) {
+                        if (!user.getHistory().containsKey(video.getTitle())) {
+                            return "FavoriteRecommendation result: " + video.getTitle();
+                        }
+                    }
+                }
+                return "FavoriteRecommendation cannot be applied!";
+            }
+            case "search" -> {
+                ArrayList<Video> search = new ArrayList<>();
+                if (user.getSubscriptionType().equals("PREMIUM")) {
+                    for (Video video : videos) {
+                        if (video.getGenres().contains(action.getGenre())
+                                && !user.getHistory().containsKey(video.getTitle())) {
+                            search.add(video);
+                        }
+                    }
+                    search.sort((video1, video2) -> {
+                        if (video1.getRating() == video2.getRating()) {
+                            return video1.getTitle().compareTo(video2.getTitle());
+                        } else {
+                            return Double.compare(video1.getRating(), video2.getRating());
+                        }
+                    });
+                    if (search.size() == 0) {
+                        return "SearchRecommendation cannot be applied!";
+                    }
+                    return "SearchRecommendation result: " + search;
+                }
                 return "SearchRecommendation cannot be applied!";
+            }
+            default -> {
+                return "";
+            }
         }
-        return "";
     }
 }

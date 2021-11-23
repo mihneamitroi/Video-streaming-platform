@@ -14,15 +14,6 @@ public class User {
     private final ArrayList<String> favoriteMovies;
     private final Map<String, Double> rating = new HashMap<>();
 
-    public User(final String username, final String subscriptionType,
-                         final Map<String, Integer> history,
-                         final ArrayList<String> favoriteMovies) {
-        this.username = username;
-        this.subscriptionType = subscriptionType;
-        this.history = history;
-        this.favoriteMovies = favoriteMovies;
-    }
-
     public User(final UserInputData user, final ArrayList<Video> videos) {
         this.username = user.getUsername();
         this.subscriptionType = user.getSubscriptionType();
@@ -38,29 +29,37 @@ public class User {
         for (Map.Entry<String, Integer> entry : this.history.entrySet()) {
             for (Video video : videos) {
                 if (video.getTitle().equals(entry.getKey())) {
-                    video.setViewCnt(entry.getValue());
+                    video.setViewCnt(video.getViewCnt() + entry.getValue());
                 }
             }
         }
     }
 
+    /**
+     *
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     *
+     */
     public Map<String, Integer> getHistory() {
         return history;
     }
 
+    /**
+     *
+     */
     public String getSubscriptionType() {
         return subscriptionType;
     }
 
-    public ArrayList<String> getFavoriteMovies() {
-        return favoriteMovies;
-    }
-
-    public int addFavorite(String title) {
+    /**
+     *
+     */
+    public int addFavorite(final String title) {
         if (this.favoriteMovies.contains(title)) {
             return 0;
         } else if (!this.history.containsKey(title)) {
@@ -71,14 +70,21 @@ public class User {
         }
     }
 
-    public void addView(String title) {
-        if (this.history.containsKey(title))
+    /**
+     *
+     */
+    public void addView(final String title) {
+        if (this.history.containsKey(title)) {
             this.history.put(title, this.history.get(title) + 1);
-        else
+        } else {
             this.history.put(title, 1);
+        }
     }
 
-    public int addRating(String title, int season, double grade) {
+    /**
+     *
+     */
+    public int addRating(final String title, final int season, final double grade) {
         String ratingTitle = title + season;
         if (this.rating.containsKey(ratingTitle)) {
             return 0;
@@ -90,10 +96,16 @@ public class User {
         return 2;
     }
 
+    /**
+     *
+     */
     public int numberRating() {
         return this.rating.size();
     }
 
+    /**
+     *
+     */
     @Override
     public String toString() {
         return this.username;
