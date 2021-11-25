@@ -19,7 +19,7 @@ public class User {
         this.subscriptionType = user.getSubscriptionType();
         this.history = user.getHistory();
         this.favoriteMovies = user.getFavoriteMovies();
-        for (String movie : favoriteMovies) {
+        for (String movie : this.favoriteMovies) {
             for (Video video : videos) {
                 if (video.getTitle().equals(movie)) {
                     video.addFavorite();
@@ -36,28 +36,30 @@ public class User {
     }
 
     /**
-     *
+     * Metod intoarce numele userului.
      */
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     /**
-     *
+     * Metoda intoarce hashmap-ul ce contine filmele vizionate de user.
      */
     public Map<String, Integer> getHistory() {
-        return history;
+        return this.history;
     }
 
     /**
-     *
+     * Metoda intoarce tipul de abonament al userului.
      */
     public String getSubscriptionType() {
-        return subscriptionType;
+        return this.subscriptionType;
     }
 
     /**
-     *
+     * Metoda verifica daca un film se afla in istoricul de favorite, in caz ca nu verifica daca
+     * videoclipul a fost vizionat. In functie de situatie, intoarce un cod folosit in clasa
+     * Command.
      */
     public int addFavorite(final String title) {
         if (this.favoriteMovies.contains(title)) {
@@ -71,7 +73,9 @@ public class User {
     }
 
     /**
-     *
+     * Metoda verifica daca un video a fost vazut deja de un user, iar in caz ca da, incrementeaza
+     * numarul de vizualizari al acestuia. Altfel, il adauga in hashmap. In functie de situatie,
+     * intoarce un cod folosit in clasa Command.
      */
     public void addView(final String title) {
         if (this.history.containsKey(title)) {
@@ -82,7 +86,8 @@ public class User {
     }
 
     /**
-     *
+     * Metoda verifica daca filmul a fost deja notat de user. Daca nu, verifica daca l-a vizionat
+     * si ii acorda o nota. In functie de situatie, intoarce un cod folosit in clasa Command.
      */
     public int addRating(final String title, final int season, final double grade) {
         String ratingTitle = title + season;
@@ -97,14 +102,14 @@ public class User {
     }
 
     /**
-     *
+     * Metoda intoarce numarul de ratinguri pe care le-a acordat userul.
      */
     public int numberRating() {
         return this.rating.size();
     }
 
     /**
-     *
+     * Override pe metoda toString.
      */
     @Override
     public String toString() {

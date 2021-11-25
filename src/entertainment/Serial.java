@@ -20,21 +20,22 @@ public class Serial extends Video {
     }
 
     /**
-     *
+     * Metoda intoarce numarul de sezoane al serialului.
      */
     public int getNumberSeason() {
         return this.numberOfSeasons;
     }
 
     /**
-     *
+     * Metoda intoarce lista de sezoane a serialului.
      */
     public ArrayList<Season> getSeasons() {
         return this.seasons;
     }
 
     /**
-     *
+     * Metoda adauga rating in lista de ratinguri a sezonului, apoi recalculeaza ratingul
+     * acestuia si al intregului serial. Apoi il seteaza.
      */
     @Override
     public void addRating(final double rating, final int seasonNumber) {
@@ -54,7 +55,7 @@ public class Serial extends Video {
     }
 
     /**
-     *
+     * Override pe metoda toString.
      */
     @Override
     public String toString() {

@@ -9,26 +9,26 @@ import java.util.Locale;
 
 public class Command {
     /**
-     *
+     * Metoda cauta si gaseste userul parsat in comanda in lista de useri data ca parametru.
+     * Apoi in functie de caz, apeleaza cate o metoda pentru user si video, prima adaugand
+     * in lista de filme favorite sau vizionate a userului video-ul precizat sau nota acestuia
+     * in hashmap. In functie de raspunsul oferit (video-ul e deja adaugat, trebuie doar
+     * actualizat), video-ului i se incrementeaza contorul de vizualizari sau adaugari la favorite
+     * sau i se adauga o noua nota.
      */
     public String findType(final ActionInputData action, final ArrayList<User> users,
                            final ArrayList<Video> videos) {
-        int output;
+        int result;
         User user = null;
-        boolean ok = false;
         for (User curUser : users) {
             if (curUser.getUsername().equals(action.getUsername())) {
                 user = curUser;
-                ok = true;
             }
-        }
-        if (!ok) {
-            return "";
         }
         switch (action.getType()) {
             case "favorite" -> {
-                output = user.addFavorite(action.getTitle());
-                if (output == 2) {
+                result = user.addFavorite(action.getTitle());
+                if (result == 2) {
                    for (Video video : videos) {
                        if (video.getTitle().equals(action.getTitle())) {
                            video.addFavorite();
@@ -36,7 +36,7 @@ public class Command {
                        }
                    }
                    return "success -> " + action.getTitle() + " was added as favourite";
-                } else if (output == 1) {
+                } else if (result == 1) {
                     return "error -> " + action.getTitle() + " is not seen";
                 }
                 return "error -> " + action.getTitle() + " is already in favourite list";
@@ -54,11 +54,11 @@ public class Command {
                         + views;
             }
             case "rating" -> {
-                output = user.addRating(action.getTitle(), action.getSeasonNumber(),
+                result = user.addRating(action.getTitle(), action.getSeasonNumber(),
                         action.getGrade());
-                if (output == 2) {
+                if (result == 2) {
                     return "error -> " + action.getTitle() + " is not seen";
-                } else if (output == 1) {
+                } else if (result == 1) {
                     for (Video video : videos) {
                         if (video.getTitle().equals(action.getTitle())) {
                             video.addRating(action.getGrade(), action.getSeasonNumber());

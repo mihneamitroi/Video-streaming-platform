@@ -20,49 +20,50 @@ public class Actor {
     }
 
     /**
-     *
+     * Metoda intoarce numele actorului.
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
-     *
+     * Metoda seteaza numele actorului.
      */
     public void setName(final String name) {
         this.name = name;
     }
 
     /**
-     *
+     * Metoda intoarce lista de filme in care a jucat actorul.
      */
     public ArrayList<String> getFilmography() {
         return this.filmography;
     }
 
     /**
-     *
+     * Metoda seteaza lista de filme in care a jucat actorul.
      */
     public void setFilmography(final ArrayList<String> filmography) {
         this.filmography = filmography;
     }
 
     /**
-     *
+     * Metoda intoarce hashmap-ul in care sunt stocate premiile actorului.
      */
     public Map<ActorsAwards, Integer> getAwards() {
         return this.awards;
     }
 
     /**
-     *
+     * Functia intoarce descrierea carierei actorului.
      */
     public String getCareerDescription() {
         return this.careerDescription;
     }
 
     /**
-     *
+     * Functia calculeaza rating-ul actorului bazat pe lista de video-uri data ca parametru.
+     * Se iau in calcul toate video-urile cu rating diferit de 0.
      */
     public double calculateRating(final ArrayList<Video> videos) {
         double rating = 0;
@@ -84,7 +85,7 @@ public class Actor {
     }
 
     /**
-     *
+     * Override pe metoda toString.
      */
     @Override
     public String toString() {

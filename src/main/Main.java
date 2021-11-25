@@ -77,6 +77,10 @@ public final class Main {
      * @param filePath1 for input file
      * @param filePath2 for output file
      * @throws IOException in case of exceptions to reading / writing
+     * In cadrul metodei preiau input-ul si il scriu in 3 liste, de video-uri (ce cuprind atat
+     * filme cat si seriale), actori si useri. Apoi parcurg lista de actiuni si execut fiecare
+     * comanda. Fiecare actiune intoarce un mesaj, ce va fi scris in final in obiectul de tip
+     * JSON.
      */
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {

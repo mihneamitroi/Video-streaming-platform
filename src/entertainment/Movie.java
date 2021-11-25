@@ -13,14 +13,15 @@ public class Movie extends Video {
     }
 
     /**
-     *
+     * Functia intoarce durata filmului.
      */
     public int getDuration() {
         return super.getDuration();
     }
 
     /**
-     *
+     * Functia adauga ratingul in lista de ratinguri si apoi calculeaza noul rating. Apoi il
+     * seteaza.
      */
     @Override
     public void addRating(final double rating, final int seasonNumber) {
@@ -33,14 +34,14 @@ public class Movie extends Video {
     }
 
     /**
-     *
+     * Functia intoarce lista de ratinguri.
      */
     public ArrayList<Double> getRatings() {
         return ratings;
     }
 
     /**
-     *
+     * Override pe metoda toString.
      */
     @Override
     public String toString() {

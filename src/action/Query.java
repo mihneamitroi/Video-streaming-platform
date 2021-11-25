@@ -16,7 +16,12 @@ import java.util.Map;
 
 public class Query {
     /**
-     *
+     * Metoda selecteaza mai intai obiectul pe care va face interogarea. In cazul actorilor,
+     * fie ca e vorba de note, premii sau descriere, se adauga actori intr-un array list,
+     * acestia fiind filtrati inainte de a fi adaugati daca este cazul. Apoi se sorteaza
+     * in functie de criteriul precizat si se afiseaza lista rezultata in urma sortarii si
+     * a eliminarii surplusului de elemente. Asemanator procedez si in cazul userilor, filmelor
+     * sau al serialelor.
      */
     public String findObjectType(final ActionInputData action, final ArrayList<User> users,
                                final ArrayList<Video> videos, final ArrayList<Actor> actors) {
@@ -25,12 +30,16 @@ public class Query {
             case "actors":
                 switch (action.getCriteria()) {
                     case "average" -> {
+                        /* Adaug doar actorii care au rating-ul calculat pe lista de filme diferit
+                        * de 0. */
                         ArrayList<Actor> actorsRating = new ArrayList<>();
                         for (Actor actor : actors) {
                             if (actor.calculateRating(videos) != 0) {
                                 actorsRating.add(actor);
                             }
                         }
+                        /* Sortez crescator sau descrescator dupa rating, iar in caz de egalitate
+                        * criteriul de departajare este numele. */
                         if (action.getSortType().equals("asc")) {
                             actorsRating.sort((actor1, actor2) ->  {
                                 if (actor1.calculateRating(videos)
@@ -55,9 +64,12 @@ public class Query {
                         while (actorsRating.size() > action.getNumber()) {
                             actorsRating.remove(actorsRating.size() - 1);
                         }
+                        /* Elimin elementele in surplus si returnez array-ul. */
                         return "Query result: " + actorsRating;
                     }
+                    /* */
                     case "awards" -> {
+                        /* Adaug doar actorii care contin toate premiile precizate. */
                         ArrayList<Actor> filteredActors = new ArrayList<>();
                         for (Actor actor : actors) {
                             boolean ok = true;
@@ -73,6 +85,8 @@ public class Query {
                                 filteredActors.add(actor);
                             }
                         }
+                        /* Sortez in functie de suma premiilor din hashmap-ul de premii si, la
+                        * egalitate, in functie de nume. */
                         if (action.getSortType().equals("asc")) {
                             filteredActors.sort((actor1, actor2) -> {
                                 int sum1 = 0, sum2 = 0;
@@ -113,14 +127,14 @@ public class Query {
                         for (Actor actor : actors) {
                             boolean ok = true;
                             for (String filter : filters.get(2)) {
-                                String word = " " + filter + " ";
-                                String careerDescription = actor.getCareerDescription().
-                                        toLowerCase().replace(",", " ");
+                                String search = " " + filter.toLowerCase() + " ";
+                                String careerDescription = actor.getCareerDescription();
+                                careerDescription = careerDescription.replace(",", " ");
                                 careerDescription = careerDescription.replace("\n", " ");
                                 careerDescription = careerDescription.replace(".", " ");
                                 careerDescription = careerDescription.replace("-", " ");
-                                careerDescription = " " + careerDescription;
-                                if (!careerDescription.toLowerCase().contains(word.toLowerCase())) {
+                                careerDescription = " " + careerDescription.toLowerCase() + " ";
+                                if (!careerDescription.contains(search)) {
                                     ok = false;
                                     break;
                                 }
@@ -129,6 +143,7 @@ public class Query {
                                 actorsDescription.add(actor);
                             }
                         }
+                        /* Sortez actorii in functie de nume si returnez array-ul. */
                         if (action.getSortType().equals("asc")) {
                             actorsDescription.sort((actor1, actor2) ->
                                     actor1.getName().compareTo(actor2.getName()));
@@ -143,12 +158,14 @@ public class Query {
                     }
                 }
             case "users":
+                /* Adaug toti userii cu un numar de rating-uri date mai mare decat 0. */
                 ArrayList<User> usersRating = new ArrayList<>();
                 for (User user : users) {
                     if (user.numberRating() != 0) {
                         usersRating.add(user);
                     }
                 }
+                /* Sortez in functie de numarul de rating-uri si in functie de nume. */
                 if (action.getSortType().equals("asc")) {
                     usersRating.sort((user1, user2) ->  {
                         if (user1.numberRating() == user2.numberRating()) {
@@ -166,17 +183,21 @@ public class Query {
                         }
                     });
                 }
+                /* Elimin userii in plus si returnez array-ul. */
                 while (usersRating.size() > action.getNumber()) {
                     usersRating.remove(usersRating.size() - 1);
                 }
                 return "Query result: " + usersRating;
             case "shows":
+                /* Adaug toate video-urile care sunt de tip Serial. */
                 ArrayList<Serial> serials = new ArrayList<>();
                 for (Video video : videos) {
                     if (video instanceof Serial) {
                         serials.add((Serial) video);
                     }
                 }
+                /* Adaug in alt array videoclipurile care indeplinesc conditiile cerute (anul si
+                * genul, daca acestea exista). */
                 ArrayList<Serial> filteredSerials = new ArrayList<>();
                 for (Serial serial : serials) {
                     boolean ok = true;
@@ -195,7 +216,11 @@ public class Query {
                     }
                 }
                 switch (action.getCriteria()) {
+                    /* Sortez ascendent sau descendent in functie de criteriu (rating, numar
+                    * de adaugari la favorite, durata sau vizualizari. Dupa acest prim criteriu,
+                    * in caz de egalitate, sortez in functie de nume. */
                     case "ratings" -> {
+                        /* Elimin videoclipurile cu rating 0. */
                         filteredSerials.removeIf(serial -> serial.getRating() == 0);
                         if (action.getSortType().equals("asc")) {
                             filteredSerials.sort((serial1, serial2) -> {
@@ -216,6 +241,7 @@ public class Query {
                         }
                     }
                     case "favorite" -> {
+                        /* Elimin videoclipurile cu numar de favorite nul. */
                         filteredSerials.removeIf(serial -> serial.getFavouriteCnt() == 0);
                         if (action.getSortType().equals("asc")) {
                             filteredSerials.removeIf(serial -> serial.getFavouriteCnt() == 0);
@@ -256,6 +282,7 @@ public class Query {
                         }
                     }
                     case "most_viewed" -> {
+                        /* Elimin videoclipurile cu numar de vizualizari nul. */
                         filteredSerials.removeIf(serial -> serial.getViewCnt() == 0);
                         if (action.getSortType().equals("asc")) {
                             filteredSerials.sort((serial1, serial2) ->  {
@@ -279,11 +306,13 @@ public class Query {
                         return "";
                     }
                 }
+                /* Pastrez doar numarul de seriale parsat ca parametru in actiune si returnez. */
                 while (filteredSerials.size() > action.getNumber()) {
                     filteredSerials.remove(filteredSerials.size() - 1);
                 }
                 return "Query result: " + filteredSerials;
             case "movies":
+                /* Procedeu analog cu cel de la seriale. */
                 ArrayList<Movie> movies = new ArrayList<>();
                 ArrayList<Movie> filteredMovies = new ArrayList<>();
                 for (Video video : videos) {
