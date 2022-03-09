@@ -36,7 +36,7 @@ public class User {
     }
 
     /**
-     * Metod intoarce numele userului.
+     * Metoda intoarce numele userului.
      */
     public String getUsername() {
         return this.username;

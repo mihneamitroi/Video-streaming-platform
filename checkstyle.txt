@@ -1,0 +1,4 @@
+Starting audit...
+[ERROR] C:\Users\mihnea.mitroi\Desktop\tema_poo\.\src\action\Query.java:26:5: Method length is 404 lines (max allowed is 150). [MethodLength]
+Audit done.
+Checkstyle ends with 1 errors.
